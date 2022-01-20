@@ -42,7 +42,8 @@ extension UIViewController {
       }))
       self?.present(alertVC, animated: true, completion: nil)
       return Disposables.create {
-        self?.dismiss(animated: true, completion: nil)
+          print("what is self?")
+       self?.dismiss(animated: true, completion: nil)
       }
     }
   }
