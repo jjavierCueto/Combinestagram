@@ -30,40 +30,20 @@
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
 
-import RxSwift
-import Foundation
 import UIKit
-import Photos
+import RxSwift
 
-class PhotoWriter {
-  enum Errors: Error {
-    case couldNotSavePhoto
-  }
-
-  static func save(_ image: UIImage) -> Single<String> {
-    return Single.create { observer in
-        
-        
-      var savedAssetId: String?
-      PHPhotoLibrary.shared().performChanges({
-          
-        let request = PHAssetChangeRequest.creationRequestForAsset(from: image)
-        savedAssetId = request.placeholderForCreatedAsset?.localIdentifier
-          
-      }, completionHandler: { success, error in
-        DispatchQueue.main.async {
-          if success, let id = savedAssetId {
-              
-              observer(.success(id))
-
-              
-          } else {
-              observer(.error(error ?? Errors.couldNotSavePhoto))              
-          }
-        }
-      })
-
-      return Disposables.create()
+extension UIViewController {
+  func alert(title: String, text: String?) -> Completable {
+    return Completable.create { [weak self] completable in
+      let alertVC = UIAlertController(title: title, message: text, preferredStyle: .alert)
+      alertVC.addAction(UIAlertAction(title: "Close", style: .default, handler: {_ in
+        completable(.completed)
+      }))
+      self?.present(alertVC, animated: true, completion: nil)
+      return Disposables.create {
+        self?.dismiss(animated: true, completion: nil)
+      }
     }
   }
 }
